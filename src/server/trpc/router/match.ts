@@ -67,11 +67,7 @@ export const matchRouter = router({
       }),
     getAllMatches: publicProcedure
       .query(async ({ctx}) => {
-        return await (await ctx.prisma.match.findMany({where: {ongoing: true}})).filter((match) => {
-          if (match.joinable) {
-            return match
-          }
-        })
+        return await (await ctx.prisma.match.findMany({where: {ongoing: true, joinable: true}}))
       }),
     getMatch: protectedProcedure
       .input(z.object({id: z.string().or(z.string().array().optional())}))
