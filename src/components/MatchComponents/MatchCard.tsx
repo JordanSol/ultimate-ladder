@@ -12,7 +12,14 @@ interface MatchCardProps {
 
 const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
     const [deleted, setDeleted] = useState(false);
-    const { mutate, error } = trpc.match.deleteMatch.useMutation({onSuccess: () => {setDeleted(true)}})
+    const deleteMatch = (matchId: string) => {
+        const { mutate, error } = trpc.match.deleteMatch.useMutation({onSuccess: () => {setDeleted(true)}})
+        mutate({id: matchId})
+    }
+    const joinMatch = (matchId: string) => {
+        const { mutate, error} = trpc.match.joinMatch.useMutation() 
+        mutate({matchId: matchId})
+    }
     // const getElapsedTime = (currTime) => {
 
     // }
@@ -30,10 +37,14 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
                         Created: {match.created.toLocaleTimeString()}
                     </p>
                     {isCreator && match.joinable ? (
-                        <button className='btn btn-sm mt-1' onClick={() => mutate({id: match.id})}>
+                        <button className='btn btn-sm mt-1' onClick={() => deleteMatch(match.id)}>
                             Cancel Search
                         </button>
-                    ) : null}
+                    ) : (
+                        <button className='btn btn-sm mt-1' onClick={() => joinMatch(match.id)}>
+                            Join Match
+                        </button>
+                    )}
                 </div>
             )}
         </>
