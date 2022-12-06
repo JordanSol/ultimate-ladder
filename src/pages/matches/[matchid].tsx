@@ -1,20 +1,42 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useSession } from "next-auth/react";
 
 const Match: NextPage = () => {
-    const router = useRouter()
-    const {matchid} = router.query
-    const {data: match} = trpc.match.getMatch.useQuery({id: matchid})
+    const [isHost, setIsHost] = useState(false);
+    const [isGuest, setIsGuest] = useState(false);
+    const router = useRouter();
+    const { data: session } = useSession();
+    const {matchid} = router.query;
+    const {data: match} = trpc.match.getMatch.useQuery({id: matchid});
 
     useEffect(() => {
-        console.log(matchid)
-    })
+        if (session?.user?.id === match?.hostId) {
+            setIsHost(true)
+        }
+        if (session?.user?.id === match?.guestId) {
+            setIsGuest(true)
+        }
+    }, [match, session?.user?.id])
 
     return (
         <main>
-            <p>Match: {match?.hostName}</p>
+            {isHost || isGuest ? (
+                <div>
+                    <p>Match Host: {match?.hostName}</p>
+                    {match?.guestName && (
+                        <p>Match Guest: {match.guestName}</p>
+                    )}
+                    <p>Arena ID: {match?.arenaId}</p>
+                    <p>Arena Password: {match?.arenaPw}</p>
+                </div>
+            ) : (
+                <div>
+                    <p>Access Denied: Not a match participant</p>
+                </div>
+            )}
         </main>
     )
 }

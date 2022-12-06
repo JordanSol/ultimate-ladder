@@ -23,7 +23,7 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
     return (
         <>
             {!deleted && (
-                <div className="bg-slate-200 text-gray-900 px-10 py-6 rounded-md">
+                <div className="bg-slate-100 text-gray-900 px-10 py-6 rounded-md">
                     <p>
                         VS: {match.hostName}
                     </p>

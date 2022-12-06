@@ -87,6 +87,8 @@ model Match {
   hostCharacter Character
   rounds        Round[]
   created       DateTime  @default(now())
+  arenaId       String
+  arenaPw       String
 }
 
 model Round {

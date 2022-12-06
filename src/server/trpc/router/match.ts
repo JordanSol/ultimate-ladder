@@ -11,7 +11,7 @@ const ee = new EventEmitter();
 
 export const matchRouter = router({
     createMatch: protectedProcedure
-      .input(z.object({ character: z.nativeEnum(Character)}))
+      .input(z.object({ character: z.nativeEnum(Character), arenaId: z.string(), arenaPw: z.string()}))
       .mutation(async ({ctx, input}) => {
         if (!ctx.session) throw new TRPCError({
             code: 'INTERNAL_SERVER_ERROR',
@@ -22,7 +22,9 @@ export const matchRouter = router({
             data: {
                 hostId: ctx.session.user.id,
                 hostName: ctx.session.user.name,
-                hostCharacter: input.character
+                hostCharacter: input.character,
+                arenaId: input.arenaId,
+                arenaPw: input.arenaPw
             }
         })
       }),
