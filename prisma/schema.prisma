@@ -58,6 +58,7 @@ model User {
   rank          Rank      @default(Bronze)
   hostedMatches Match[]   @relation("hostedMatches")
   joinedMatches Match[]   @relation("joinedMatches")
+  role          Role      @default(USER)
 }
 
 model VerificationToken {
@@ -85,20 +86,39 @@ model Match {
   guestScore    Int       @default(0)
   hostCharacter Character
   rounds        Round[]
-  created       DateTime @default(now())
+  created       DateTime  @default(now())
 }
 
 model Round {
-  id        String    @id @default(cuid())
-  match     Match     @relation(fields: [matchId], references: [id])
-  matchId   String
-  hostChar  Character
-  guestChar Character
-  bans      Stage[]
-  stage     Stage
+  id          String    @id @default(cuid())
+  match       Match     @relation(fields: [matchId], references: [id])
+  matchId     String
+  hostChar    Character?
+  guestChar   Character?
+  ban1        Stage?
+  ban2        Stage?
+  stage       Stage?
+  roundNumber Int       @default(1)
+  complete    Boolean   @default(false)
+  hostVote    Winner?
+  guestVote   Winner?
+  winner      Winner    @default(NONE)
 }
 
 //ENUMS
+
+enum Role {
+  USER 
+  MODERATOR
+}
+
+enum Winner {
+  HOST
+  GUEST
+  NONE
+  DISPUTE
+}
+
 enum Rank {
   Bronze
   Silver

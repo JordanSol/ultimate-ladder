@@ -26,6 +26,15 @@ export const matchRouter = router({
             }
         })
       }),
+    joinMatch: protectedProcedure
+      .input(z.object({ matchId: z.string()}))
+      .mutation(async ({ctx, input}) => {
+        if (!ctx.session) throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'No active authentication session, login and retry.'
+        });
+        return await ctx.prisma.match.update({where: {id: input.matchId}, data: {guestId: ctx.session.user.id, guestName: ctx.session.user.name}});
+      }),
     deleteMatch: protectedProcedure
       .input(z.object({ id: z.string() }))
       .mutation(async ({input, ctx}) => {
