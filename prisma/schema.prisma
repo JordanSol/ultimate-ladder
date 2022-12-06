@@ -55,6 +55,9 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  rank          Rank      @default(Bronze)
+  hostedMatches Match[]   @relation("hostedMatches")
+  joinedMatches Match[]   @relation("joinedMatches")
 }
 
 model VerificationToken {
@@ -63,4 +66,155 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Match {
+  id            String    @id @default(cuid())
+  region        Region    @default(PNW)
+  ranked        Boolean   @default(false)
+  bestOf        BestOf    @default(FREE)
+  ongoing       Boolean   @default(true)
+  host          User      @relation(name: "hostedMatches", fields: [hostId], references: [id])
+  guest         User?     @relation(name: "joinedMatches", fields: [guestId], references: [id])
+  hostId        String
+  guestId       String?
+  hostName      String?
+  guestName     String?
+  joinable      Boolean   @default(true)
+  hostScore     Int       @default(0)
+  guestScore    Int       @default(0)
+  hostCharacter Character
+  rounds        Round[]
+  created       DateTime @default(now())
+}
+
+model Round {
+  id        String    @id @default(cuid())
+  match     Match     @relation(fields: [matchId], references: [id])
+  matchId   String
+  hostChar  Character
+  guestChar Character
+  bans      Stage[]
+  stage     Stage
+}
+
+//ENUMS
+enum Rank {
+  Bronze
+  Silver
+  Gold
+  Platinum
+  Diamond
+  Masters
+}
+
+enum BestOf {
+  THREE
+  FIVE
+  FREE
+}
+
+enum Region {
+  PNW
+}
+
+enum Stage {
+  BF
+  SBF
+  FD
+  PS2
+  SV
+  HB
+  TC
+  KALOS
+}
+
+enum Character {
+  RANDOM
+  MARIO
+  DONKEYKONG
+  LINK
+  SAMUS
+  DARKSAMUS
+  YOSHI
+  KIRBY
+  FOX
+  PIKACHU
+  LUIGI
+  NESS
+  CAPTAINFALCON
+  JIGGLYPUFF
+  PEACH
+  DAISY
+  BOWSER
+  ICECLIMBERS
+  SHEIK
+  ZELDA
+  DRMARIO
+  PICHU
+  FALCO
+  MARTH
+  LUCINA
+  YOUNGLINK
+  GANONDORF
+  MEWTWO
+  ROY
+  CHROM
+  GNW
+  METAKNIGHT
+  PIT
+  DARKPIT
+  ZSS
+  WARIO
+  SNAKE
+  IKE
+  PT
+  DIDDYKONG
+  LUCAS
+  SONIC
+  DDD
+  OLIMAR
+  LUCARIO
+  ROB
+  TOONLINK
+  WOLF
+  VILLAGER
+  MEGAMAN
+  WIIFIT
+  ROSALINA
+  LITTLEMAC
+  GRENINJA
+  BRAWLER
+  SWORDFIGHTER
+  GUNNER
+  PALUTENA
+  PACMAN
+  ROBIN
+  SHULK
+  BOWSERJR
+  DUCKHUNT
+  RYU
+  KEN
+  CLOUD
+  CORRIN
+  BAYONETTA
+  INKING
+  RIDLEY
+  SIMON
+  RICHTER
+  KROOL
+  ISABELLE
+  INCINEROAR
+  PLANT
+  JOKER
+  HERO
+  BANJO
+  TERRY
+  BYLETH
+  MINMIN
+  STEVE
+  SEPHIROTH
+  AEGIS
+  KAZUYA
+  SORA
 }

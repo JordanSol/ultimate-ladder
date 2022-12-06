@@ -1,12 +1,26 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 import { trpc } from "../utils/trpc";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+// Component Imports
+import MatchCard from "../components/MatchComponents/MatchCard";
+import CreateMatch from "../components/MatchComponents/CreateMatch";
+
+// Hooks
+import useUiStore from "../utils/hooks/uiStore";
 
 const Home: NextPage = () => {
-  const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
+  const { data: session } = useSession();
+  const router = useRouter();
+  const toggleModal = useUiStore((state) => state?.toggleCreateMatchModal);
+
+  const showCreateMatchModal = useUiStore((state) => state?.createMatchModal)
 
   return (
     <>
@@ -18,37 +32,21 @@ const Home: NextPage = () => {
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+            Ultimate <span className="text-[hsl(280,100%,70%)]">Ladder</span>
           </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
           <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-            </p>
             <AuthShowcase />
+            <button className="btn" onClick={toggleModal}>
+              create match
+            </button>
+              {session ? (
+                <Matches />
+              ) : null}
           </div>
         </div>
+        {showCreateMatchModal ? (
+          <CreateMatch/>
+        ) : null}
       </main>
     </>
   );
@@ -63,7 +61,6 @@ const AuthShowcase: React.FC = () => {
     undefined, // no input
     { enabled: sessionData?.user !== undefined },
   );
-
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl text-white">
@@ -79,3 +76,35 @@ const AuthShowcase: React.FC = () => {
     </div>
   );
 };
+
+const Matches: React.FC = () => {
+  const { data: sessionData } = useSession();
+  const { data: matches  } = trpc.match.getUserMatches.useQuery(undefined, {refetchInterval: 10000})
+
+  return (
+    <div >
+      {matches && matches.length > 0 ? (
+        <div className='grid grid-cols-2 gap-4'>
+          {matches.map((match) => {
+            const checkCreator = () => {
+              if (sessionData?.user && sessionData?.user.id === match.hostId) {
+                return true
+              } else {
+                return false
+              }
+            }
+            const isCreator = checkCreator()
+            console.log(match)
+            return (
+              <MatchCard key={match.id} match={match} isCreator={isCreator}/>
+            )
+          })}
+        </div>
+      ) : (
+        <div>
+          No Matches Available
+        </div>
+      )}
+    </div>
+  )
+}
