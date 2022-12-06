@@ -79,7 +79,7 @@ const AuthShowcase: React.FC = () => {
 
 const Matches: React.FC = () => {
   const { data: sessionData } = useSession();
-  const { data: matches  } = trpc.match.getUserMatches.useQuery(undefined, {refetchInterval: 10000})
+  const { data: matches  } = trpc.match.getAllMatches.useQuery(undefined, {refetchInterval: 10000})
 
   return (
     <div >

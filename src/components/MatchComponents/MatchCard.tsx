@@ -4,6 +4,7 @@ import type { Match } from '@prisma/client'
 import { trpc } from "../../utils/trpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {characters, findCharacter} from '../../lib/characters';
+import { useRouter } from 'next/router';
 
 interface MatchCardProps {
     match: Match
@@ -11,22 +12,18 @@ interface MatchCardProps {
 }
 
 const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
+    const router = useRouter();
     const [deleted, setDeleted] = useState(false);
-    const deleteMatch = (matchId: string) => {
-        const { mutate, error } = trpc.match.deleteMatch.useMutation({onSuccess: () => {setDeleted(true)}})
-        mutate({id: matchId})
-    }
-    const joinMatch = (matchId: string) => {
-        const { mutate, error} = trpc.match.joinMatch.useMutation() 
-        mutate({matchId: matchId})
-    }
+    const deleteMatch = trpc.match.deleteMatch.useMutation({onSuccess: () => {setDeleted(true)}});
+    const joinMatch = trpc.match.joinMatch.useMutation({onSuccess: (data) => router.push(`/matches/${data.id}`)});
+
     // const getElapsedTime = (currTime) => {
 
     // }
     return (
         <>
             {!deleted && (
-                <div className="bg-slate-300 text-gray-900 px-10 py-6">
+                <div className="bg-slate-200 text-gray-900 px-10 py-6 rounded-md">
                     <p>
                         VS: {match.hostName}
                     </p>
@@ -37,11 +34,11 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
                         Created: {match.created.toLocaleTimeString()}
                     </p>
                     {isCreator && match.joinable ? (
-                        <button className='btn btn-sm mt-1' onClick={() => deleteMatch(match.id)}>
+                        <button className='btn btn-sm mt-1' onClick={() => deleteMatch.mutate({id: match.id})}>
                             Cancel Search
                         </button>
                     ) : (
-                        <button className='btn btn-sm mt-1' onClick={() => joinMatch(match.id)}>
+                        <button className='btn btn-sm mt-1' onClick={() => joinMatch.mutate({matchId: match.id})}>
                             Join Match
                         </button>
                     )}
