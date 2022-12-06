@@ -33,7 +33,15 @@ export const matchRouter = router({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'No active authentication session, login and retry.'
         });
-        return await ctx.prisma.match.update({where: {id: input.matchId}, data: {guestId: ctx.session.user.id, guestName: ctx.session.user.name}});
+        const match = await ctx.prisma.match.findUnique({where: {id: input.matchId}});
+        if (match?.joinable) {
+          return await ctx.prisma.match.update({where: {id: input.matchId}, data: {guestId: ctx.session.user.id, guestName: ctx.session.user.name, joinable: false }});
+        } else {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message: 'Another player already joined this match.'
+          })
+        }
       }),
     deleteMatch: protectedProcedure
       .input(z.object({ id: z.string() }))

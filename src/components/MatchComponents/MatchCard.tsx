@@ -15,7 +15,7 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
     const router = useRouter();
     const [deleted, setDeleted] = useState(false);
     const deleteMatch = trpc.match.deleteMatch.useMutation({onSuccess: () => {setDeleted(true)}});
-    const joinMatch = trpc.match.joinMatch.useMutation({onSuccess: (data) => router.push(`/matches/${data.id}`)});
+    const joinMatch = trpc.match.joinMatch.useMutation({onSuccess: (data) => router.push(`/matches/${data?.id}`)});
 
     // const getElapsedTime = (currTime) => {
 

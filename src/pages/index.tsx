@@ -36,9 +36,11 @@ const Home: NextPage = () => {
           </h1>
           <div className="flex flex-col items-center gap-2">
             <AuthShowcase />
-            <button className="btn" onClick={toggleModal}>
-              create match
-            </button>
+            {session ? (
+              <button className="btn" onClick={toggleModal}>
+                create match
+              </button>
+            ) : null}
               {session ? (
                 <Matches />
               ) : null}
