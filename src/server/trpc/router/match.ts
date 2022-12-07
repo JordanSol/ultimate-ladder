@@ -5,13 +5,13 @@ import { TRPCError } from "@trpc/server";
 import { EventEmitter } from "events";
 
 import { trpc } from "../../../utils/trpc";
-import { BansFirst, Character, Match, Stage } from "@prisma/client";
+import { BansFirst, Character, type Match, Stage } from "@prisma/client";
 
 const ee = new EventEmitter();
 
 export const matchRouter = router({
     createMatch: protectedProcedure
-      .input(z.object({ character: z.nativeEnum(Character), arenaId: z.string(), arenaPw: z.string()}))
+      .input(z.object({ arenaId: z.string(), arenaPw: z.string()}))
       .mutation(async ({ctx, input}) => {
         if (!ctx.session) throw new TRPCError({
             code: 'INTERNAL_SERVER_ERROR',
@@ -22,7 +22,6 @@ export const matchRouter = router({
             data: {
                 hostId: ctx.session.user.id,
                 hostName: ctx.session.user.name,
-                hostCharacter: input.character,
                 arenaId: input.arenaId,
                 arenaPw: input.arenaPw
             }

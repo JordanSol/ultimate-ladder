@@ -16,9 +16,6 @@ const CreateMatch: FC = () => {
         router.push(`/matches/${data.id}`)
       }});
 
-    const handleOnChange = (e: any) => {
-        setCharacter(e.target.value)
-    };
     const handleId = (e: any) => {
         setArenaId(e.target.value)
     };
@@ -29,22 +26,14 @@ const CreateMatch: FC = () => {
     return (
         <div className='fixed top-0 left-0 w-screen h-screen flex justify-center items-center'>
             <div className='relative w-screen h-screen flex justify-center items-center'>
-                <div className='bg-black/30 absolute top-0 left-0 w-full h-full' onClick={toggleModal}/>
-                <div className="bg-base-100 min-w-76 rounded-md p-10 z-10">
-                    <h3>Create A Match:</h3>
+                <div className='bg-black/50 absolute top-0 left-0 w-full h-full' onClick={toggleModal}/>
+                <div className="bg-base-100 min-w-76 rounded-md p-10 z-10 flex flex-col gap-2">
+                    <h3 className='font-bold text-lg'>Create A Match:</h3>
                     <div className='flex flex-col gap-2'>
-                        <select className="select select-bordered w-full max-w-sm" defaultValue="null" value={character} onChange={handleOnChange}>
-                            <option value="null" disabled>Select A Character</option>
-                            {characters.map((char) => {
-                                return <option key={char.key} value={char.key}>{char.name}</option>
-                            })}
-                        </select>
-                        <input className='input input-sm input-bordered w-full max-w-sm' type="text" onChange={handleId} placeholder="Arena ID" value={arenaId} />
-                        <input className='input input-sm input-bordered w-full max-w-sm' type="text" onChange={handlePw} placeholder="Arena Password" value={arenaPw} />
-                        <button className='btn btn-sm btn-primary w-full' disabled={!character || arenaId.length < 4 || arenaPw.length === 0} onClick={() => {
-                            if (character) {
-                                mutate({character: character, arenaId: arenaId, arenaPw: arenaPw})
-                        }}}>
+                        <input className='input input-bordered w-full max-w-sm' type="text" onChange={handleId} placeholder="Arena ID" value={arenaId} />
+                        <input className='input input-bordered w-full max-w-sm' type="text" onChange={handlePw} placeholder="Arena Password" value={arenaPw} />
+                        <button className='btn btn-primary w-full' disabled={ arenaId.length < 4 || arenaPw.length === 0} onClick={() => {
+                                mutate({arenaId: arenaId, arenaPw: arenaPw})}}>
                             CREATE
                         </button>
                     </div>

@@ -84,7 +84,7 @@ model Match {
   joinable      Boolean   @default(true)
   hostScore     Int       @default(0)
   guestScore    Int       @default(0)
-  hostCharacter Character
+  hostCharacter Character?
   rounds        Round[]
   created       DateTime  @default(now())
   arenaId       String

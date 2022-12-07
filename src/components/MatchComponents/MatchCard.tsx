@@ -28,9 +28,6 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
                         VS: {match.hostName}
                     </p>
                     <p>
-                        Character: {findCharacter(match.hostCharacter)}
-                    </p>
-                    <p>
                         Created: {match.created.toLocaleTimeString()}
                     </p>
                     {isCreator && match.joinable ? (

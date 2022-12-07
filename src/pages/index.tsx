@@ -32,10 +32,9 @@ const Home: NextPage = () => {
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Ultimate <span className="text-[hsl(280,100%,70%)]">Ladder</span>
           </h1>
-          <div className="flex flex-col items-center gap-2">
-            <AuthShowcase />
+          <div className="flex flex-col items-center gap-4">
             {session ? (
-              <button className="btn" onClick={toggleModal}>
+              <button className="btn btn-secondary" onClick={toggleModal}>
                 create match
               </button>
             ) : null}
@@ -66,12 +65,6 @@ const AuthShowcase: React.FC = () => {
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
         {secretMessage && <span> - {secretMessage}</span>}
       </p>
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => signOut() : () => signIn()}
-      >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
     </div>
   );
 };

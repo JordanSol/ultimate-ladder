@@ -66,7 +66,7 @@ const ManageRound: FC<ManageRoundProps> = ({match}) => {
                 </div>
             ) : null}
             {round && !round.guestChar && !isHost ? (
-                <div>
+                <div className=''>
                     <h3 className='text-lg font-bold'>
                         Pick Your Character:
                     </h3>
