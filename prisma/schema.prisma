@@ -105,6 +105,7 @@ model Round {
   hostVote    Winner?
   guestVote   Winner?
   winner      Winner    @default(NONE)
+  bansFirst   BansFirst @default(HOST)
 }
 
 //ENUMS
@@ -112,6 +113,11 @@ model Round {
 enum Role {
   USER 
   MODERATOR
+}
+
+enum BansFirst {
+  HOST
+  GUEST
 }
 
 enum Winner {

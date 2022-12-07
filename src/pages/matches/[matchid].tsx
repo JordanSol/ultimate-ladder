@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
 import { useEffect, useState } from 'react'
 import { useSession } from "next-auth/react";
+import ManageRound from "../../components/MatchComponents/ManageRound";
 
 const Match: NextPage = () => {
     const [isHost, setIsHost] = useState(false);
@@ -31,6 +32,9 @@ const Match: NextPage = () => {
                     )}
                     <p>Arena ID: {match?.arenaId}</p>
                     <p>Arena Password: {match?.arenaPw}</p>
+                    {match !== null && match !== undefined ? (
+                        <ManageRound match={match}/>
+                    ) : null}
                 </div>
             ) : (
                 <div>
