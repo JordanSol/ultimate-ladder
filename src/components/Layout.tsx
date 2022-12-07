@@ -7,9 +7,9 @@ interface LayoutProps {
 
 const Layout: FC<LayoutProps> = ({children}) => {
     return (
-        <main className="flex flex-col min-h-screen h-full bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        <main className="flex flex-col min-h-screen h-full">
             <Navbar/>
-            <section className='h-full grow flex flex-col items-center justify-center '>
+            <section className='h-full grow flex flex-col items-center'>
                 {children}
             </section>
         </main>

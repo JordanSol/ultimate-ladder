@@ -11,6 +11,10 @@ interface MatchCardProps {
     isCreator: boolean
 }
 
+interface ElapsedTimeProps {
+    time: Date
+}
+
 const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
     const router = useRouter();
     const [deleted, setDeleted] = useState(false);
@@ -23,24 +27,46 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
     return (
         <>
             {!deleted && (
-                <div className="bg-slate-100 text-gray-900 px-10 py-6 rounded-md">
-                    <p>
-                        VS: {match.hostName}
+                <div className="bg-slate-900 text-white/90 px-10 py-6 rounded-md flex flex-col gap-1">
+                    <p className='font-bold text-lg'>
+                        Hosted By: <span className='text-accent'>{match.hostName}</span>
                     </p>
-                    <p>
-                        Created: {match.created.toLocaleTimeString()}
-                    </p>
+                    <div>
+                        <ElapsedTime time={match.created}/>
+                    </div>
                     {isCreator && match.joinable ? (
-                        <button className='btn btn-sm mt-1' onClick={() => deleteMatch.mutate({id: match.id})}>
+                        <button className='btn btn-sm btn-secondary btn-outline mt-1' onClick={() => deleteMatch.mutate({id: match.id})}>
                             Cancel Search
                         </button>
                     ) : (
-                        <button className='btn btn-sm mt-1' onClick={() => joinMatch.mutate({matchId: match.id})}>
+                        <button className='btn btn-sm btn-secondary btn-outline mt-1' onClick={() => joinMatch.mutate({matchId: match.id})}>
                             Join Match
                         </button>
                     )}
                 </div>
             )}
+        </>
+    )
+}
+
+const ElapsedTime: FC<ElapsedTimeProps> = ({time}) => {
+    const [elapsed, setElapsed] = useState(0);
+    const getTime = () => {
+        const now = Date.now()
+        let timeDiff = now - time.getTime() 
+        timeDiff /= 1000
+        return Math.round(timeDiff)
+    }
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setElapsed(getTime())
+        });
+        return () => clearInterval(interval)
+    }, [])
+    return (
+        <>
+            <span className='font-bold text-lg'>Active: </span>
+            <span className='text-accent'>{elapsed}</span>
         </>
     )
 }
