@@ -11,9 +11,9 @@ const Layout: FC<LayoutProps> = ({children}) => {
         <main className="flex min-h-screen h-full overflow-hidden">
             {/* <Navbar/> */}
             <Sidebar/>
-            <div className='grow z-10 bg-base-100 transition-all'>
+            <div className='grow z-10 bg-base-100 transition-all flex flex-col'>
                 <Navbar/>
-                <section className='h-full grow flex flex-col items-center overflow-auto'>
+                <section className='h-full w-full grow flex flex-col items-center overflow-auto'>
                     {children}
                 </section>
             </div>

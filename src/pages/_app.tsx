@@ -1,4 +1,5 @@
 import { type AppType } from "next/app";
+import Head from "next/head";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import Layout from "../components/Layout";
@@ -12,11 +13,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
+    <>
+    <Head>
+    <title>Ultimate Ladder</title>
+    <meta name="description" content="Smash Ultimate Ladder: By Chill?!" />
+    <link rel="icon" href="/favicon.ico" />
+    </Head>
     <SessionProvider session={session}>
       <Layout>
         <Component {...pageProps} />
       </Layout>
     </SessionProvider>
+    </>
   );
 };
 

@@ -159,6 +159,22 @@ export const matchRouter = router({
 
         return {deleted: result}
       }),
+
+    closeMatch: protectedProcedure
+      .input(z.object({ id: z.string()}))
+      .mutation(async ({ctx, input}) => {
+        const result = await ctx.prisma.match.update({
+          where: {
+            id: input.id
+          },
+          data: {
+            ongoing: false
+          }
+        })
+
+        return {updated: result}
+      }),
+
     getUserMatches: protectedProcedure
       .query(async ({ctx}) => {
         if (!ctx.session) throw new TRPCError({
@@ -177,6 +193,11 @@ export const matchRouter = router({
           })
         }
 
+      }),
+
+    getUserActiveMatch: protectedProcedure
+      .query(async ({ctx}) => {
+        return await ctx.prisma.match.findFirst({where: {hostId: ctx.session.user.id, ongoing: true}})
       }),
 
     getAllMatches: publicProcedure
