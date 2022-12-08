@@ -10,7 +10,7 @@ const Sidebar = () => {
     const sidebarOpen = useUiStore((state) => state.sidebarOpen);
 
     return (
-        <div className={`${!sidebarOpen && "w-0"} relative transition-all`}>
+        <div className={`${!sidebarOpen && "w-0"} relative transition-all h-screen`}>
             <div className={`${!sidebarOpen && "md:relative absolute"} h-screen p-4 flex flex-col bg-slate-900 items-center justify-between shadow-inner`}>
                 <div className='flex flex-col items-center gap-2'>
                     <Link href="/" className=''>
