@@ -13,6 +13,7 @@ const CreateMatch: FC = () => {
     const [arenaId, setArenaId] = useState("");
     const [arenaPw, setArenaPw] = useState("");
     const {mutate, error} = trpc.match.createMatch.useMutation({onSuccess: (data) => {
+        toggleModal()
         router.push(`/matches/${data.id}`)
       }});
 

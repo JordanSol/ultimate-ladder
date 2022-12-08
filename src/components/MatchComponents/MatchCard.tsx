@@ -27,9 +27,9 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
     return (
         <>
             {!deleted && (
-                <div className="bg-slate-900 text-white/90 px-10 py-6 rounded-md flex flex-col gap-1">
+                <div className="bg-slate-900 text-white/90 px-10 py-6 rounded-md flex flex-col gap-1 w-full">
                     <p className='font-bold text-lg'>
-                        Hosted By: <span className='text-accent'>{match.hostName}</span>
+                        Hosted By: <span className='text-accent font-normal'>{match.hostName}</span>
                     </p>
                     <div>
                         <ElapsedTime time={match.created}/>
@@ -50,12 +50,16 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator}) => {
 }
 
 const ElapsedTime: FC<ElapsedTimeProps> = ({time}) => {
-    const [elapsed, setElapsed] = useState(0);
+    const [elapsed, setElapsed] = useState({hours: 0, minutes: 0, seconds: 0});
     const getTime = () => {
         const now = Date.now()
-        let timeDiff = now - time.getTime() 
-        timeDiff /= 1000
-        return Math.round(timeDiff)
+        let elapsedTime = now - time.getTime() 
+        elapsedTime /= 1000
+        const hours = Math.round(Math.floor(elapsedTime / 3600));
+        elapsedTime -= hours * 3600;
+        const minutes = Math.round(Math.floor(elapsedTime / 60));
+        elapsedTime -= minutes * 60;
+        return {hours, minutes, seconds: Math.round(elapsedTime)};
     }
     useEffect(() => {
         const interval = setInterval(() => {
@@ -66,7 +70,7 @@ const ElapsedTime: FC<ElapsedTimeProps> = ({time}) => {
     return (
         <>
             <span className='font-bold text-lg'>Active: </span>
-            <span className='text-accent'>{elapsed}</span>
+            <span className='text-accent'>{elapsed.hours < 10 && 0}{elapsed.hours}:{elapsed.minutes < 10 && 0}{elapsed.minutes}:{elapsed.seconds < 10 && 0}{elapsed.seconds}</span>
         </>
     )
 }

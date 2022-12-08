@@ -31,15 +31,20 @@ const Home: NextPage = () => {
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Ultimate <span className="text-[hsl(280,100%,70%)]">Ladder</span>
           </h1>
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-4 w-full">
             {session ? (
-              <button className="btn btn-primary" onClick={toggleModal}>
-                create match
-              </button>
+              <>
+              <div className='w-full flex justify-between items-center'>
+                <h4 className='font-bold text-xl text-slate-200'>
+                  Open Matches
+                </h4>
+                <button className="btn btn-sm btn-primary" onClick={toggleModal}>
+                  create match
+                </button>
+              </div>
+              <Matches />
+              </>
             ) : null}
-              {session ? (
-                <Matches />
-              ) : null}
           </div>
         </div>
         {showCreateMatchModal ? (
@@ -56,9 +61,9 @@ const Matches: React.FC = () => {
   const { data: matches  } = trpc.match.getAllMatches.useQuery(undefined, {refetchInterval: 10000})
 
   return (
-    <div >
+    <div className='w-full max-w-[1000px]'>
       {matches && matches.length > 0 ? (
-        <div className='grid md:grid-cols-2 gap-4'>
+        <div className='w-full grid md:grid-cols-2 gap-4 bg-black/10 p-4 rounded-md'>
           {matches.map((match) => {
             const checkCreator = () => {
               if (sessionData?.user && sessionData?.user.id === match.hostId) {
@@ -75,7 +80,7 @@ const Matches: React.FC = () => {
           })}
         </div>
       ) : (
-        <div>
+        <div className='p-4 bg-black/10 rounded-md'>
           No Matches Available
         </div>
       )}
