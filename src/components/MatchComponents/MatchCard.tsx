@@ -28,7 +28,7 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator, refetch}) => {
     return (
         <>
             {!deleted && (
-                <div className="bg-slate-900 text-white/90 px-10 py-6 rounded-md flex flex-col gap-1 w-full hover:scale-[102%] transition-all">
+                <div className="bg-slate-900 shadow-md text-white/90 px-10 py-6 rounded-md flex flex-col gap-1 w-full hover:scale-[102%] transition-all">
                     <p className='font-bold text-xl'>
                         vs. <span className='text-accent font-normal'>{match.hostName}</span>
                     </p>
@@ -36,7 +36,7 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator, refetch}) => {
                         <ElapsedTime time={match.created}/>
                     </div>
                     {!isCreator && match.joinable ? (
-                        <button className='btn btn-sm btn-secondary btn-outline mt-1' onClick={() => joinMatch.mutate({matchId: match.id})}>
+                        <button className='btn btn-sm btn-accent btn-outline opacity-60 mt-1' onClick={() => joinMatch.mutate({matchId: match.id})}>
                             Join Match
                         </button>
                     ) : null}

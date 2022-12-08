@@ -18,7 +18,7 @@ const CreateMatch: FC = () => {
       }});
 
     const handleId = (e: any) => {
-        setArenaId(e.target.value)
+        setArenaId(e.target.value.toUpperCase())
     };
     const handlePw = (e: any) => {
         setArenaPw(e.target.value)
@@ -32,8 +32,8 @@ const CreateMatch: FC = () => {
                     <h3 className='font-bold text-lg'>Create A Match:</h3>
                     <div className='flex flex-col gap-2'>
                         <input className='input input-bordered w-full max-w-sm' type="text" onChange={handleId} placeholder="Arena ID" value={arenaId} />
-                        <input className='input input-bordered w-full max-w-sm' type="text" onChange={handlePw} placeholder="Arena Password" value={arenaPw} />
-                        <button className='btn btn-primary w-full' disabled={ arenaId.length < 4 || arenaPw.length === 0} onClick={() => {
+                        <input className='input input-bordered w-full max-w-sm' type="number" onChange={handlePw} placeholder="Arena Password" value={arenaPw} />
+                        <button className='btn btn-primary w-full' disabled={ arenaId.length !== 5 || arenaPw.length === 0} onClick={() => {
                                 mutate({arenaId: arenaId, arenaPw: arenaPw})}}>
                             CREATE
                         </button>

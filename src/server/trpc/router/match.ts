@@ -197,7 +197,9 @@ export const matchRouter = router({
 
     getUserActiveMatch: protectedProcedure
       .query(async ({ctx}) => {
-        return await ctx.prisma.match.findFirst({where: {hostId: ctx.session.user.id, ongoing: true}})
+        const hosted = await ctx.prisma.match.findMany({where: {hostId: ctx.session.user.id, ongoing: true}})
+        const joined = await ctx.prisma.match.findMany({where: {guestId: ctx.session.user.id, ongoing: true}})
+        return [...hosted, ...joined]
       }),
 
     getAllMatches: publicProcedure

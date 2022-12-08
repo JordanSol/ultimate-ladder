@@ -1,6 +1,8 @@
 import Link from "next/link"
-import Image from "next/image"
+import { signOut } from "next-auth/react"
 import {AiOutlineHome} from 'react-icons/ai'
+import {RxExit} from 'react-icons/rx'
+
 import { useSession } from "next-auth/react"
 
 import useUiStore from "../utils/hooks/uiStore"
@@ -25,11 +27,9 @@ const Sidebar = () => {
                     </ul>
                 </div>
                 {session?.user?.image ? (
-                    <div className="avatar">
-                        <div className="w-10 rounded-full ring-1 ring-primary ring-offset-base-100 ring-offset-2">
-                            <Image src={session?.user?.image} alt="User Image" width={50} height={50}/>
-                        </div>
-                    </div>
+                    <button className='hover:scale-110 hover:text-white transition-all' onClick={() => signOut()}>
+                        <RxExit className='text-xl' />
+                    </button>
                 ) : null}
             </div>
         </div>
