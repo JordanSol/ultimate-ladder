@@ -1,10 +1,12 @@
 import type {FC} from 'react'
+import Image from 'next/image';
 import {useState, useEffect} from 'react'
 import type { Match } from '@prisma/client'
 import { trpc } from "../../utils/trpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {characters, findCharacter} from '../../lib/characters';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 interface MatchCardProps {
     match: Match,
@@ -17,9 +19,10 @@ interface ElapsedTimeProps {
 }
 
 const MatchCard: FC<MatchCardProps> = ({match, isCreator, refetch}) => {
+    const {data: sessionData} = useSession();
     const router = useRouter();
     const [deleted, setDeleted] = useState(false);
-    const deleteMatch = trpc.match.deleteMatch.useMutation({onSuccess: () => {setDeleted(true)}});
+    const {data: host} = trpc.user.getUser.useQuery({id: match.hostId});
     const joinMatch = trpc.match.joinMatch.useMutation({onSuccess: (data) => router.push(`/matches/${data?.id}`)});
 
     // const getElapsedTime = (currTime) => {
@@ -28,18 +31,27 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator, refetch}) => {
     return (
         <>
             {!deleted && (
-                <div className="bg-slate-900 shadow-md text-white/90 px-10 py-6 rounded-md flex flex-col gap-1 w-full hover:scale-[102%] transition-all">
-                    <p className='font-bold text-xl'>
-                        vs. <span className='text-accent font-normal'>{match.hostName}</span>
-                    </p>
-                    <div>
-                        <ElapsedTime time={match.created}/>
+                <div className="bg-slate-900 shadow-md text-white/90 px-6 py-6 rounded-md flex items-center gap-4 w-full hover:scale-[102%] transition-all">
+                    <div className="avatar">
+                        <div className="rounded-full ring-1 ring-accent ring-offset-base-100 ring-offset-2">
+                            {host?.image && (
+                                <Image src={host?.image} alt="User Image" width={50} height={50}/>
+                            )}
+                        </div>
                     </div>
-                    {!isCreator && match.joinable ? (
-                        <button className='btn btn-sm btn-accent btn-outline opacity-60 mt-1' onClick={() => joinMatch.mutate({matchId: match.id})}>
-                            Join Match
-                        </button>
-                    ) : null}
+                    <div className=''>
+                        <p className='font-bold text-lg md:text-xl'>
+                            vs. <span className='text-accent font-normal'>{match.hostName}</span>
+                        </p>
+                        <div className="text-sm md:text-md">
+                            <ElapsedTime time={match.created}/>
+                        </div>
+                        {!isCreator && match.joinable ? (
+                            <button className='btn btn-sm btn-accent btn-outline opacity-60 mt-1' onClick={() => joinMatch.mutate({matchId: match.id})}>
+                                Join Match
+                            </button>
+                        ) : null}
+                    </div>
                 </div>
             )}
         </>

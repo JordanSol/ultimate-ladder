@@ -4,7 +4,6 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { EventEmitter } from "events";
 
-import { trpc } from "../../../utils/trpc";
 import { BansFirst, Character, type Match, Stage } from "@prisma/client";
 
 const ee = new EventEmitter();
