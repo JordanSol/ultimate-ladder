@@ -115,7 +115,7 @@ const UserMatch: React.FC<UserMatchProps> = ({match, refetchMatch, refetchMatche
       {match?.id ? (        
         <div className='w-full rounded-md bg-slate-900 hover:scale-[102%] hover:bg-slate-900/80 transition-all p-4'>
           <div className='flex justify-between items-center'>
-            <div className='flex gap-2 items-center'>
+            <div className='flex flex-wrap gap-2 items-center '>
               <h4 className='text-xl text-center font-bold text-gray-200 inline-block'>
                 {match?.joinable ? <div>
                   Searching <button disabled className='btn !bg-transparent btn-xs btn-square loading' />
