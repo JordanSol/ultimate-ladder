@@ -32,23 +32,27 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator, refetch}) => {
         <>
             {!deleted && (
                 <div className="bg-slate-900 shadow-md text-white/90 px-6 py-6 rounded-md flex items-center gap-4 w-full hover:scale-[102%] transition-all">
-                    <div className="avatar">
-                        <div className="rounded-full ring-1 ring-accent ring-offset-base-100 ring-offset-2">
-                            {host?.image && (
-                                <Image src={host?.image} alt="User Image" width={50} height={50}/>
-                            )}
+                    {match && (
+                        <div className="avatar">
+                            <div className="rounded-full ring-1 ring-accent ring-offset-base-100 ring-offset-2">
+                                {host?.image && (
+                                    <Image src={host?.image} alt="User Image" width={50} height={50}/>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                    <div className=''>
-                        <p className='font-bold text-lg md:text-xl'>
-                            vs. <span className='text-accent font-normal'>{match.hostName}</span>
-                        </p>
-                        <div className="text-sm md:text-md">
-                            <ElapsedTime time={match.created}/>
+                    )}
+                    <div className='flex justify-between items-center w-full'>
+                        <div>
+                            <p className='font-bold text-lg md:text-xl'>
+                                vs. <span className='text-accent font-normal'>{match.hostName}</span>
+                            </p>
+                            <div className="text-sm md:text-md">
+                                <ElapsedTime time={match.created}/>
+                            </div>
                         </div>
                         {!isCreator && match.joinable ? (
-                            <button className='btn btn-sm btn-accent btn-outline opacity-60 mt-1' onClick={() => joinMatch.mutate({matchId: match.id})}>
-                                Join Match
+                            <button className='btn  btn-accent mt-1' onClick={() => joinMatch.mutate({matchId: match.id})}>
+                                Join
                             </button>
                         ) : null}
                     </div>

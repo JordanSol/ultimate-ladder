@@ -11,7 +11,7 @@ const Match: NextPage = () => {
     const router = useRouter();
     const { data: session } = useSession();
     const {matchid} = router.query;
-    const {data: match} = trpc.match.getMatch.useQuery({id: matchid});
+    const {data: match, isLoading} = trpc.match.getMatch.useQuery({id: matchid}, {refetchInterval: 5000});
 
     useEffect(() => {
         if (session?.user?.id === match?.hostId) {
@@ -22,6 +22,13 @@ const Match: NextPage = () => {
         }
     }, [match, session?.user?.id])
 
+    if (isLoading) {
+        return (
+            <div>
+                Fetching match details...
+            </div>
+        )
+    }
     return (
         <main>
             {session ? (
@@ -31,8 +38,7 @@ const Match: NextPage = () => {
                         <span className="text-[hsl(280,100%,70%)]">
                             {!match?.joinable && (
                                 <>
-                                    {isHost && `${match?.guestName}`}
-                                    {!isHost && `${match?.hostName}`}
+                                    {isHost ? match?.guestName : match?.hostName}
                                 </>
                                 
                             )}

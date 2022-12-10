@@ -16,11 +16,12 @@ import type { Match } from "@prisma/client";
 
 interface MatchesProps {
   matches: Match[] | undefined;
+  activeMatch: boolean;
   refetchMatches: () => void;
 }
 
 interface UserMatchProps {
-  match: Match | null | undefined;
+  match: Match;
   refetchMatch: () => void;
   refetchMatches: () => void;
 }
@@ -28,8 +29,8 @@ interface UserMatchProps {
 const Home: NextPage = () => {
   const { data: session } = useSession();
   const { data: matches, refetch: refetchMatches } = trpc.match.getAllMatches.useQuery(undefined, {refetchInterval: 10000})
-  const { data: userMatches, refetch: refetchMatch } = trpc.match.getUserActiveMatch.useQuery(undefined, {refetchInterval: 5000});
-  const showCreateMatchModal = useUiStore((state) => state?.createMatchModal)
+  const { data: userMatches, refetch: refetchMatch } = trpc.match.getUserActiveMatch.useQuery(undefined, {refetchInterval: 10000});
+  const showCreateMatchModal = useUiStore((state) => state?.createMatchModal);
 
   return (
     <>
@@ -43,7 +44,7 @@ const Home: NextPage = () => {
               {userMatches?.map(match => (
                 <UserMatch key={match.id} match={match} refetchMatch={refetchMatch} refetchMatches={refetchMatches}/>
               ))}
-              <Matches matches={matches} refetchMatches={refetchMatches} />
+              <Matches matches={matches} refetchMatches={refetchMatches} activeMatch={userMatches && userMatches?.length > 0 ? true : false}/>
               </>
             ) : null}
           </div>
@@ -57,7 +58,7 @@ const Home: NextPage = () => {
 
 export default Home;
 
-const Matches: React.FC<MatchesProps> = ({matches, refetchMatches}) => {
+const Matches: React.FC<MatchesProps> = ({matches, activeMatch, refetchMatches}) => {
   const { data: sessionData } = useSession();
   const toggleModal = useUiStore((state) => state?.toggleCreateMatchModal);
 
@@ -67,7 +68,7 @@ const Matches: React.FC<MatchesProps> = ({matches, refetchMatches}) => {
         <h4 className='font-bold text-xl text-slate-200'>
           Open Matches
         </h4>
-        <button className="btn btn-sm btn-primary" onClick={toggleModal}>
+        <button className="btn btn-sm btn-primary" onClick={toggleModal} disabled={activeMatch}>
           create match
         </button>
       </div>
@@ -100,9 +101,11 @@ const Matches: React.FC<MatchesProps> = ({matches, refetchMatches}) => {
 const UserMatch: React.FC<UserMatchProps> = ({match, refetchMatch, refetchMatches}) => {
   const { data: session } = useSession()
   const [isHost, setIsHost] = useState(false);
+  const [opponentImage, setOpponentImage] = useState("");
   const router = useRouter();
   const closeMatch = trpc.match.closeMatch.useMutation();
   const deleteMatch = trpc.match.deleteMatch.useMutation();
+
 
   useEffect(() => {
     if (session?.user?.id === match?.hostId) {
@@ -123,7 +126,7 @@ const UserMatch: React.FC<UserMatchProps> = ({match, refetchMatch, refetchMatche
                   <span>
                     vs {" "}
                     <span className='text-accent'>
-                      {match?.guestName}
+                      {isHost ? match?.guestName : match?.hostName}
                     </span>
                   </span>
                 )}

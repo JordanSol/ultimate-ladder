@@ -40,59 +40,64 @@ const ManageRound: FC<ManageRoundProps> = ({match}) => {
         console.log("Is Host:", isHost)
     }, [match]);
 
-    return (
-        <div>
-            {round && !round.hostChar && isHost ? (
-                <div>
-                    <h3 className='text-lg font-bold'>
-                        Pick Your Character:
-                    </h3>
-                    <select className="select select-bordered w-full max-w-sm" defaultValue="null" value={character} onChange={handleOnChange}>
-                        <option value="null" disabled>Select A Character</option>
-                        {characters.map((char) => {
-                            return <option key={char.key} value={char.key}>{char.name}</option>
-                        })}
-                    </select>
-                    <button className='btn btn-sm w-full' disabled={!character} onClick={async () => {
-                        if (character) {
-                            const pick = await pickCharacter.mutateAsync({character: character, matchId: match.id, roundId: round.id})
-                            if (pick) {
-                                refetchRound()
+    if (match.ongoing) {
+
+        return (
+            <div>
+                {round && !round.hostChar && isHost ? (
+                    <div>
+                        <h3 className='text-lg font-bold'>
+                            Pick Your Character:
+                        </h3>
+                        <select className="select select-bordered w-full max-w-sm" defaultValue="null" value={character} onChange={handleOnChange}>
+                            <option value="null" disabled>Select A Character</option>
+                            {characters.map((char) => {
+                                return <option key={char.key} value={char.key}>{char.name}</option>
+                            })}
+                        </select>
+                        <button className='btn btn-sm w-full' disabled={!character} onClick={async () => {
+                            if (character) {
+                                const pick = await pickCharacter.mutateAsync({character: character, matchId: match.id, roundId: round.id})
+                                if (pick) {
+                                    refetchRound()
+                                }
                             }
-                        }
-                    }}>
-                        Submit
-                    </button>
-                </div>
-            ) : null}
-            {round && !round.guestChar && !isHost ? (
-                <div className=''>
-                    <h3 className='text-lg font-bold'>
-                        Pick Your Character:
-                    </h3>
-                    <select className="select select-bordered w-full max-w-sm" defaultValue="null" value={character} onChange={handleOnChange}>
-                        <option value="null" disabled>Select A Character</option>
-                        {characters.map((char) => {
-                            return <option key={char.key} value={char.key}>{char.name}</option>
-                        })}
-                    </select>
-                    <button className='btn btn-sm w-full' disabled={!character} onClick={async () => {
-                        if (character) {
-                            const pick = await pickCharacter.mutateAsync({character: character, matchId: match.id, roundId: round.id})
-                            if (pick) {
-                                refetchRound()
+                        }}>
+                            Submit
+                        </button>
+                    </div>
+                ) : null}
+                {round && !round.guestChar && !isHost ? (
+                    <div className=''>
+                        <h3 className='text-lg font-bold'>
+                            Pick Your Character:
+                        </h3>
+                        <select className="select select-bordered w-full max-w-sm" defaultValue="null" value={character} onChange={handleOnChange}>
+                            <option value="null" disabled>Select A Character</option>
+                            {characters.map((char) => {
+                                return <option key={char.key} value={char.key}>{char.name}</option>
+                            })}
+                        </select>
+                        <button className='btn btn-sm w-full' disabled={!character} onClick={async () => {
+                            if (character) {
+                                const pick = await pickCharacter.mutateAsync({character: character, matchId: match.id, roundId: round.id})
+                                if (pick) {
+                                    refetchRound()
+                                }
                             }
-                        }
-                    }}>
-                        Submit
-                    </button>
-                </div>
-            ) : null}
-            {round && round.guestChar && round.hostChar ? (
-                <p>{match.hostName}: {findCharacter(round.hostChar)} vs. {match.guestName}: {findCharacter(round.guestChar)}</p>
-            ) : null}
-        </div>
-    )
+                        }}>
+                            Submit
+                        </button>
+                    </div>
+                ) : null}
+                {round && round.guestChar && round.hostChar ? (
+                    <p>{match.hostName}: {findCharacter(round.hostChar)} vs. {match.guestName}: {findCharacter(round.guestChar)}</p>
+                ) : null}
+            </div>
+        )
+    } else {
+        return <></>
+    }
 }
 
 export default ManageRound
