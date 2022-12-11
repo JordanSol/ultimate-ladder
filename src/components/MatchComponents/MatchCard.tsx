@@ -3,10 +3,7 @@ import Image from 'next/image';
 import {useState, useEffect} from 'react'
 import type { Match } from '@prisma/client'
 import { trpc } from "../../utils/trpc";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {characters, findCharacter} from '../../lib/characters';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 
 interface MatchCardProps {
     match: Match,
@@ -18,11 +15,9 @@ interface ElapsedTimeProps {
     time: Date
 }
 
-const MatchCard: FC<MatchCardProps> = ({match, isCreator, refetch}) => {
-    const {data: sessionData} = useSession();
+const MatchCard: FC<MatchCardProps> = ({match, isCreator }) => {
     const router = useRouter();
-    const [deleted, setDeleted] = useState(false);
-    const {data: host} = trpc.user.getUser.useQuery({id: match.hostId});
+    const {data: host, isLoading} = trpc.user.getUser.useQuery({id: match.hostId});
     const joinMatch = trpc.match.joinMatch.useMutation({onSuccess: (data) => router.push(`/matches/${data?.id}`)});
 
     // const getElapsedTime = (currTime) => {
@@ -30,9 +25,8 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator, refetch}) => {
     // }
     return (
         <>
-            {!deleted && (
                 <div className="bg-slate-900 shadow-md text-white/90 px-6 py-6 rounded-md flex items-center gap-4 w-full hover:scale-[102%] transition-all">
-                    {match && (
+                    {!isLoading && (
                         <div className="avatar">
                             <div className="rounded-full ring-1 ring-accent ring-offset-base-100 ring-offset-2">
                                 {host?.image && (
@@ -57,7 +51,6 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator, refetch}) => {
                         ) : null}
                     </div>
                 </div>
-            )}
         </>
     )
 }

@@ -18,6 +18,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <title>Ultimate Ladder</title>
     <meta name="description" content="Smash Ultimate Ladder: By Chill?!" />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="manifest" href="../../manifest.json"></link>
     </Head>
     <SessionProvider session={session}>
       <Layout>

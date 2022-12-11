@@ -101,7 +101,6 @@ const Matches: React.FC<MatchesProps> = ({matches, activeMatch, refetchMatches})
 const UserMatch: React.FC<UserMatchProps> = ({match, refetchMatch, refetchMatches}) => {
   const { data: session } = useSession()
   const [isHost, setIsHost] = useState(false);
-  const [opponentImage, setOpponentImage] = useState("");
   const router = useRouter();
   const closeMatch = trpc.match.closeMatch.useMutation();
   const deleteMatch = trpc.match.deleteMatch.useMutation();
