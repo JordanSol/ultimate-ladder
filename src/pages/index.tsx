@@ -13,10 +13,12 @@ import CreateMatch from "../components/MatchComponents/CreateMatch";
 import useUiStore from "../utils/hooks/uiStore";
 import { useRouter } from "next/router";
 import type { Match } from "@prisma/client";
+import LoadingSpinner from "../components/Spinner";
 
 interface MatchesProps {
   matches: Match[] | undefined;
   activeMatch: boolean;
+  isLoading: boolean;
   refetchMatches: () => void;
 }
 
@@ -28,14 +30,14 @@ interface UserMatchProps {
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
-  const { data: matches, refetch: refetchMatches } = trpc.match.getAllMatches.useQuery(undefined, {refetchInterval: 10000})
+  const { data: matches, refetch: refetchMatches, isLoading } = trpc.match.getAllMatches.useQuery(undefined, {refetchInterval: 10000})
   const { data: userMatches, refetch: refetchMatch } = trpc.match.getUserActiveMatch.useQuery(undefined, {refetchInterval: 10000});
   const showCreateMatchModal = useUiStore((state) => state?.createMatchModal);
 
   return (
     <>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-10 w-full">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem] text-center">
             Ultimate <span className="text-[hsl(280,100%,70%)]">Ladder</span>
           </h1>
           <div className="flex flex-col items-center gap-4 w-full h-full grow">
@@ -44,7 +46,7 @@ const Home: NextPage = () => {
               {userMatches?.map(match => (
                 <UserMatch key={match.id} match={match} refetchMatch={refetchMatch} refetchMatches={refetchMatches}/>
               ))}
-              <Matches matches={matches} refetchMatches={refetchMatches} activeMatch={userMatches && userMatches?.length > 0 ? true : false}/>
+              <Matches matches={matches} refetchMatches={refetchMatches} activeMatch={userMatches && userMatches?.length > 0 ? true : false} isLoading={isLoading}/>
               </>
             ) : null}
           </div>
@@ -58,41 +60,47 @@ const Home: NextPage = () => {
 
 export default Home;
 
-const Matches: React.FC<MatchesProps> = ({matches, activeMatch, refetchMatches}) => {
+const Matches: React.FC<MatchesProps> = ({matches, activeMatch, isLoading, refetchMatches}) => {
   const { data: sessionData } = useSession();
   const toggleModal = useUiStore((state) => state?.toggleCreateMatchModal);
 
   return (
     <div className='w-full bg-black/10 p-4 rounded-md'>
-      <div className='w-full flex justify-between items-center mb-2'>
-        <h4 className='font-bold text-xl text-slate-200'>
-          Open Matches
-        </h4>
-        <button className="btn btn-sm btn-primary" onClick={toggleModal} disabled={activeMatch}>
-          create match
-        </button>
-      </div>
-      {matches && matches.length > 0 ? (
-        <div className='w-full grid md:grid-cols-2 gap-4'>
-          {matches.map((match) => {
-            const checkCreator = () => {
-              if (sessionData?.user && sessionData?.user.id === match.hostId) {
-                return true
-              } else {
-                return false
-              }
-            };
-            const isCreator = checkCreator()
-            console.log(match)
-            return (
-              <MatchCard key={match.id} match={match} isCreator={isCreator} refetch={refetchMatches}/>
-            )
-          })}
-        </div>
+      {isLoading ? (
+        <LoadingSpinner/>
       ) : (
-        <div className='opacity-70'>
-          No Matches Available
+        <>
+        <div className='w-full flex justify-between items-center mb-2'>
+          <h4 className='font-bold text-xl text-slate-200'>
+            Open Matches
+          </h4>
+          <button className="btn btn-sm btn-primary" onClick={toggleModal} disabled={activeMatch}>
+            create match
+          </button>
         </div>
+        {matches && matches.length > 0 ? (
+          <div className='w-full grid md:grid-cols-2 gap-4'>
+            {matches.map((match) => {
+              const checkCreator = () => {
+                if (sessionData?.user && sessionData?.user.id === match.hostId) {
+                  return true
+                } else {
+                  return false
+                }
+              };
+              const isCreator = checkCreator()
+              console.log(match)
+              return (
+                <MatchCard key={match.id} match={match} isCreator={isCreator} refetch={refetchMatches}/>
+              )
+            })}
+          </div>
+        ) : (
+          <div className='opacity-70'>
+            No Matches Available
+          </div>
+        )}
+        </>
       )}
     </div>
   )

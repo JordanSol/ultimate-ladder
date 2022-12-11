@@ -27,7 +27,7 @@ const MatchCard: FC<MatchCardProps> = ({match, isCreator }) => {
         <>
                 <div className="bg-slate-900 shadow-md text-white/90 px-6 py-6 rounded-md flex items-center gap-4 w-full hover:scale-[102%] transition-all">
                     {!isLoading && (
-                        <div className="avatar">
+                        <div className="avatar aspect-square">
                             <div className="rounded-full ring-1 ring-accent ring-offset-base-100 ring-offset-2">
                                 {host?.image && (
                                     <Image src={host?.image} alt="User Image" width={50} height={50}/>

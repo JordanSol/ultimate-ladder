@@ -4,6 +4,7 @@ import { trpc } from "../../utils/trpc";
 import { useEffect, useState } from 'react'
 import { useSession } from "next-auth/react";
 import ManageRound from "../../components/MatchComponents/ManageRound";
+import LoadingSpinner from "../../components/Spinner";
 
 const Match: NextPage = () => {
     const [isHost, setIsHost] = useState(false);
@@ -25,7 +26,7 @@ const Match: NextPage = () => {
     if (isLoading) {
         return (
             <div>
-                Fetching match details...
+                <LoadingSpinner/>
             </div>
         )
     }
@@ -33,8 +34,8 @@ const Match: NextPage = () => {
         <main>
             {session ? (
                 <>
-                    <h1 className="text-3xl text-center font-extrabold tracking-tight text-white sm:text-[2.5rem] mb-4">
-                        {match?.joinable ? "Searching..." : "vs "}
+                    <h1 className="text-3xl text-center font-extrabold tracking-tight text-white sm:text-[2.5rem] mb-6">
+                        {match?.joinable ? "Waiting For Opponent" : "vs "}
                         <span className="text-[hsl(280,100%,70%)]">
                             {!match?.joinable && (
                                 <>
