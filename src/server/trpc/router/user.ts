@@ -5,8 +5,10 @@ import { TRPCError } from "@trpc/server";
 
 export const userRouter = router({
     getUser: publicProcedure
-        .input(z.object({id: z.string()}))
+        .input(z.object({id: z.string().or(z.string().array().optional())}))
         .query(async ({ctx, input}) => {
-            return await ctx.prisma.user.findUnique({where: {id: input.id}})
+            if (typeof input.id === "string"){
+                return await ctx.prisma.user.findUnique({where: {id: input.id}})
+            }
         })
 })

@@ -1,18 +1,15 @@
-import React, {FC, useState} from 'react'
-import { Character } from '@prisma/client'
-import { characters } from '../../lib/characters';
+import React, {type FC, useState} from 'react'
 import { trpc } from '../../utils/trpc';
-import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import useUiStore from '../../utils/hooks/uiStore'
+import { motion } from 'framer-motion';
 
 const CreateMatch: FC = () => {
     const toggleModal = useUiStore((state) => state.toggleCreateMatchModal);
     const router = useRouter();
-    const [character, setCharacter] = useState();
     const [arenaId, setArenaId] = useState("");
     const [arenaPw, setArenaPw] = useState("");
-    const {mutate, error} = trpc.match.createMatch.useMutation({onSuccess: (data) => {
+    const {mutate} = trpc.match.createMatch.useMutation({onSuccess: (data) => {
         toggleModal()
         router.push(`/matches/${data.id}`)
       }});
@@ -25,7 +22,12 @@ const CreateMatch: FC = () => {
     };
 
     return (
-        <div className='fixed top-0 left-0 w-screen h-screen flex justify-center items-center'>
+        <motion.div className='fixed top-0 left-0 w-screen h-screen flex justify-center items-center'
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
+            transition={{duration: 0.14}}
+        >
             <div className='relative w-screen h-screen flex justify-center items-center'>
                 <div className='bg-black/50 absolute top-0 left-0 w-full h-full' onClick={toggleModal}/>
                 <div className="bg-base-100 min-w-76 rounded-md p-10 z-10 flex flex-col gap-2">
@@ -40,7 +42,7 @@ const CreateMatch: FC = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     )
 }
 

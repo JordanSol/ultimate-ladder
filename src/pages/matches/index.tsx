@@ -6,12 +6,12 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "../../utils/trpc";
 import type { Match } from "@prisma/client";
 
-const Home: NextPage = () => {
+const Matches: NextPage = () => {
   return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-
+        
       </main>
   );
 };
 
-export default Home;
+export default Matches;

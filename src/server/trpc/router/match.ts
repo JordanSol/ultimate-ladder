@@ -174,24 +174,22 @@ export const matchRouter = router({
         return {updated: result}
       }),
 
-    getUserMatches: protectedProcedure
-      .query(async ({ctx}) => {
-        if (!ctx.session) throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'No active authentication session, login and retry.'
-        });
+    getUserMatches: publicProcedure
+      .input(z.object({ id: z.string().or( z.string().array().optional())}))
+      .query(async ({ctx, input}) => {
         try {
-          const hostedMatches = await ctx.prisma.match.findMany({where: {hostId: ctx.session.user.id}});
-          const joinedMatches = await ctx.prisma.match.findMany({where: {guestId: ctx.session.user.id}});
-          const matches = [...hostedMatches, ...joinedMatches];
-          return matches
+          if (typeof input.id === "string") {            
+            const hostedMatches = await ctx.prisma.match.findMany({where: {hostId: input.id}});
+            const joinedMatches = await ctx.prisma.match.findMany({where: {guestId: input.id}});
+            const matches = [...hostedMatches, ...joinedMatches];
+            return matches
+          }
         } catch (error) {
           throw new TRPCError({
             code: 'INTERNAL_SERVER_ERROR',
             message: 'Error fetching matches.'
           })
         }
-
       }),
 
     getUserActiveMatch: protectedProcedure

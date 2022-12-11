@@ -8,18 +8,20 @@ const Navbar = () => {
   const toggleSidebar = useUiStore((state) => state.toggleSidebar)
 
     return (
-        <nav className='w-full flex justify-between items-center p-4'>
+        <nav className='w-full flex justify-between items-center p-4 px-8 absolute top-0 left-0 z-10'>
             <button className="btn btn-square btn-sm btn-ghost" onClick={() => toggleSidebar()}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
             {sessionData ? (
                 <>                
                 {sessionData?.user?.image ? (
-                    <div className="avatar">
-                        <div className="w-10 rounded-full ring-1 ring-primary ring-offset-base-100 ring-offset-2">
-                            <Image src={sessionData?.user?.image} alt="User Image" width={50} height={50}/>
+                    <Link href={`/user/${sessionData.user.id}`}>
+                        <div className="avatar">
+                            <div className="w-10 rounded-full ring-1 ring-primary ring-offset-base-100 ring-offset-2">
+                                <Image src={sessionData?.user?.image} alt="User Image" width={50} height={50}/>
+                            </div>
                         </div>
-                    </div>
+                    </Link>
                 ) : null}
                 </>
             ) : (

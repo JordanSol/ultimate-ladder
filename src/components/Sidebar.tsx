@@ -13,34 +13,34 @@ const Sidebar = () => {
     const sidebarOpen = useUiStore((state) => state.sidebarOpen);
 
     return (
-        <div className={`relative transition-all h-screen`}>
+        <div className="relative transition-all h-screen hidden sm:block">
             <div className={`h-screen p-4 px-5 flex flex-col bg-slate-900 items-center justify-between shadow-inner transition-all`}>
                 <div className='flex flex-col items-center gap-4'>
                     <Link href="/" className=''>
-                        <h5 className='font-bold text-white/80 text-lg'>
+                        <h5 className='font-bold text-white/80 text-xl'>
                             U<span className='text-[hsl(280,100%,70%)]'>L</span>
                         </h5>
                     </Link>
                     <hr className='w-full border-gray-300/50'/>
                     <ul className="flex flex-col gap-5">
-                        <li>
-                            <Link href="/" className='flex items-center text-xl hover:text-primary'>
+                        <li className="cursor-pointer">
+                            <Link href="/" className='flex items-center text-2xl hover:text-primary'>
                                 <AiOutlineHome className="transition-all shrink-0"/>
                                 <span className={`text-sm w-full ml-3 ${!sidebarOpen && "w-[0px] !ml-0"} transition-all`}>
                                     {sidebarOpen && "Home"}
                                 </span>
                             </Link>
                         </li>
-                        <li >
-                            <Link href="/" className='flex items-center text-xl hover:text-primary'>
+                        <li className="cursor-pointer">
+                            <Link href={session?.user ? `/user/${session?.user?.id}` : "/auth/signin"} className='flex items-center text-2xl hover:text-primary'>
                                 <AiOutlineUser className="transition-all shrink-0"/>
                                 <span className={`text-sm w-full ml-3 ${!sidebarOpen && "w-[0px] !ml-0"} transition-all`}>
                                     {sidebarOpen && "Profile"}
                                 </span>
                             </Link>
                         </li>
-                        <li >
-                            <Link href="/ranked" className='flex items-center text-xl hover:text-primary'>
+                        <li className="cursor-pointer">
+                            <Link href="/ranked" className='flex items-center text-2xl hover:text-primary'>
                                 <RiMedalLine className="transition-all shrink-0"/>
                                 <span className={`text-sm w-full ml-3 ${!sidebarOpen && "w-[0px] !ml-0"} transition-all`}>
                                     {sidebarOpen && "Ranked"}
