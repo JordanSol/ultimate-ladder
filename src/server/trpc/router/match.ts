@@ -167,7 +167,8 @@ export const matchRouter = router({
             id: input.id
           },
           data: {
-            ongoing: false
+            ongoing: false,
+            completed: true
           }
         })
 
@@ -179,10 +180,16 @@ export const matchRouter = router({
       .query(async ({ctx, input}) => {
         try {
           if (typeof input.id === "string") {            
-            const hostedMatches = await ctx.prisma.match.findMany({where: {hostId: input.id}});
-            const joinedMatches = await ctx.prisma.match.findMany({where: {guestId: input.id}});
+            const hostedMatches = await ctx.prisma.match.findMany({where: {hostId: input.id, ongoing: false, joinable: false}});
+            const joinedMatches = await ctx.prisma.match.findMany({where: {guestId: input.id, ongoing: false, joinable: false}});
             const matches = [...hostedMatches, ...joinedMatches];
-            return matches
+            function sortByDate(a: Match, b: Match): number {
+              return new Date(b.created).getTime() - new Date(a.created).getTime();
+            }
+
+            const sortedMatches = matches.sort(sortByDate)
+
+            return sortedMatches
           }
         } catch (error) {
           throw new TRPCError({

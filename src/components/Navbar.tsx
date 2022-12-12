@@ -8,7 +8,7 @@ const Navbar = () => {
   const toggleSidebar = useUiStore((state) => state.toggleSidebar)
 
     return (
-        <nav className='w-full flex justify-between items-center p-4 px-8 absolute top-0 left-0 z-10'>
+        <nav className='w-full flex justify-between items-center py-4 px-4 md:px-8 lg:px-10 absolute left-0 top-0 z-10'>
             <button className="btn btn-square btn-sm btn-ghost" onClick={() => toggleSidebar()}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>

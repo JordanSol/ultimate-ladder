@@ -56,9 +56,17 @@ model User {
   accounts      Account[]
   sessions      Session[]
   rank          Rank      @default(Bronze)
+  wins          Int?      @default(0)
+  losses        Int?      @default(0)
+  winRate       Int?      @default(0)
   hostedMatches Match[]   @relation("hostedMatches")
   joinedMatches Match[]   @relation("joinedMatches")
   role          Role      @default(USER)
+  twitter       String?   
+  twitch        String?
+  startgg       String?
+  pronouns      String?
+  mains         Character[]
 }
 
 model VerificationToken {
@@ -86,6 +94,7 @@ model Match {
   guestScore    Int       @default(0)
   hostCharacter Character?
   rounds        Round[]
+  completed     Boolean   @default(false)
   created       DateTime  @default(now())
   arenaId       String
   arenaPw       String

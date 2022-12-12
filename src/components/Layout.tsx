@@ -14,10 +14,10 @@ const Layout: FC<LayoutProps> = ({children}) => {
         <main className="flex max-h-screen h-screen overflow-hidden">
             {/* <Navbar/> */}
             <Sidebar/>
-            <div className='grow z-10 bg-base-100 transition-all flex flex-col relative overflow-x-hidden'>
+            <div className='grow z-10 bg-base-100 transition-all flex flex-col relative overflow-x-visible'>
                 <Navbar/>
                 <AnimatePresence exitBeforeEnter>
-                    <motion.section className='h-full w-full grow flex flex-col items-center overflow-auto py-10 pt-24 px-4 md:px-8 lg:px-10'
+                    <motion.section className='h-full w-full grow flex flex-col items-center overflow-auto'
                         initial={{opacity: 0, scale: 0.98, y: 5}}
                         animate={{opacity: 1, scale: 1, y: 0}}
                         exit={{opacity: 0, scale: 0.98, y: 5}}

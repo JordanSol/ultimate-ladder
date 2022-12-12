@@ -25,13 +25,13 @@ const Match: NextPage = () => {
 
     if (isLoading) {
         return (
-            <div>
+            <div className="page">
                 <LoadingSpinner/>
             </div>
         )
     }
     return (
-        <main>
+        <main className="page">
             {session ? (
                 <>
                     <h1 className="text-3xl text-center font-extrabold tracking-tight text-white sm:text-[2.5rem] mb-6">
