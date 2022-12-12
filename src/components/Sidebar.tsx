@@ -13,7 +13,7 @@ const Sidebar = () => {
     const sidebarOpen = useUiStore((state) => state.sidebarOpen);
 
     return (
-        <div className="relative transition-all h-screen hidden sm:block">
+        <div className="relative transition-all h-screen">
             <div className={`h-screen p-4 px-5 flex flex-col bg-slate-900 items-center justify-between shadow-inner transition-all`}>
                 <div className='flex flex-col items-center gap-4'>
                     <Link href="/" className=''>
