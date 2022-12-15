@@ -5,6 +5,8 @@ import { TRPCError } from "@trpc/server";
 import { EventEmitter } from "events";
 
 import { BansFirst, Character, type Match, Stage } from "@prisma/client";
+import { Input } from "postcss";
+import { reportMatch } from "../../../utils/logic/rating";
 
 const ee = new EventEmitter();
 
@@ -238,6 +240,18 @@ export const matchRouter = router({
             code: 'NOT_FOUND',
             message: 'Round does not exist.'
           });
+        }
+      }),
+    
+    reportRanked: protectedProcedure
+      .input(z.object({matchId: z.string()}))
+      .mutation(async ({ctx, input}) => {
+        const match = await ctx.prisma.match.findUnique({where: {id: input.matchId}});
+        if (match?.ranked && match?.guestId && match?.hostScore === 3) {
+          reportMatch(match.hostId, match.guestId, ctx.prisma);
+        }
+        if (match?.ranked && match?.guestId && match?.hostScore === 3) {
+          reportMatch(match.guestId, match.hostId, ctx.prisma);
         }
       })
   });

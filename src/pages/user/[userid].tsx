@@ -13,6 +13,8 @@ const User: NextPage = () => {
     const {userid} = router.query;
     const {data: user, isLoading} = trpc.user.getUser.useQuery({id: userid});
     const {data: userMatches, refetch} = trpc.match.getUserMatches.useQuery({id: userid});
+    const initRating = trpc.user.initRating.useMutation();
+    const forceWin = trpc.user.winExample.useMutation();
     const [isUser, setIsUser] = useState(false);
 
     useEffect(() => {
@@ -20,7 +22,6 @@ const User: NextPage = () => {
             setIsUser(true);
         }
     }, [session?.user, userid])
-
 
     if (isLoading) {
         return (
@@ -44,11 +45,11 @@ const User: NextPage = () => {
                     <h1 className="font-bold text-gray-100 text-3xl">{user?.name}</h1>
                 </div>
             </div>
-            { userMatches?.map((match) => {
+            {/* { userMatches?.map((match) => {
                 console.log(match)
                 return (
                 <MatchCard match={match} isCreator={false} key={match.id} refetch={refetch}/>
-            )})}
+            )})} */}
             
         </main>
     )
