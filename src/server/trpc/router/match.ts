@@ -2,31 +2,33 @@ import { z } from "zod";
 
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { EventEmitter } from "events";
+import { pusherServerClient } from "../../helpers/pusher";
 
 import { BansFirst, Character, type Match, Stage } from "@prisma/client";
-import { Input } from "postcss";
 import { reportMatch } from "../../../utils/logic/rating";
 
-const ee = new EventEmitter();
 
 export const matchRouter = router({
     createMatch: protectedProcedure
       .input(z.object({ arenaId: z.string(), arenaPw: z.string()}))
       .mutation(async ({ctx, input}) => {
-        if (!ctx.session) throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'No active authentication session, login and retry.'
-        });
         await ctx.prisma.match.deleteMany({where: {hostId: ctx.session.user.id, joinable: true}})
-        return await ctx.prisma.match.create({
+        const match = await ctx.prisma.match.create({
             data: {
                 hostId: ctx.session.user.id,
                 hostName: ctx.session.user.name,
                 arenaId: input.arenaId,
                 arenaPw: input.arenaPw
             }
-        })
+        });
+
+        await pusherServerClient.trigger(
+          'matches',
+          'new-match',
+          {}
+        );
+
+        return match
       }),
 
     joinMatch: protectedProcedure
@@ -54,13 +56,18 @@ export const matchRouter = router({
                 return BansFirst.GUEST
               }
             }
+            await pusherServerClient.trigger(
+              `match-${match.id}`,
+              'update-match',
+              {}
+            );
             await ctx.prisma.round.create({
               data: {
                 matchId: input.matchId,
                 roundNumber: round,
                 bansFirst: bansFirst()
               }
-            })
+            });
           }
           return update
         } else {
@@ -94,6 +101,11 @@ export const matchRouter = router({
               return BansFirst.GUEST
             }
           }
+          await pusherServerClient.trigger(
+            `match-${match.id}`,
+            'update-match',
+            {}
+          );
           return await ctx.prisma.round.create({
             data: {
               matchId: input.matchId,
@@ -132,13 +144,23 @@ export const matchRouter = router({
           if (match?.hostId === ctx.session.user.id) {
             await ctx.prisma.round.update({where: {id: input.roundId}, data: {
               hostChar: input.character
-            }})
+            }});
+            await pusherServerClient.trigger(
+              `match-${match.id}`,
+              'update-match',
+              {}
+            );
             return true
           }
           if (match?.guestId === ctx.session.user.id) {
             await ctx.prisma.round.update({where: {id: input.roundId}, data: {
               guestChar: input.character
-            }})
+            }});
+            await pusherServerClient.trigger(
+              `match-${match.id}`,
+              'update-match',
+              {}
+            );
             return true
           }
         } catch (e) {
@@ -156,7 +178,12 @@ export const matchRouter = router({
             where: {
                 id: input.id
             }
-        })
+        });
+        await pusherServerClient.trigger(
+          'matches',
+          'delete-match',
+          {}
+        );
 
         return {deleted: result}
       }),
@@ -173,7 +200,11 @@ export const matchRouter = router({
             completed: true
           }
         })
-
+        await pusherServerClient.trigger(
+          'matches',
+          'delete-match',
+          {}
+        );
         return {updated: result}
       }),
 

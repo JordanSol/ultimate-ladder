@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useSession } from "next-auth/react";
 import ManageRound from "../../components/MatchComponents/ManageRound";
 import LoadingSpinner from "../../components/Spinner";
+import usePusherStore from "../../utils/hooks/pusherStore";
 
 const Match: NextPage = () => {
     const [isHost, setIsHost] = useState(false);
@@ -12,7 +13,14 @@ const Match: NextPage = () => {
     const router = useRouter();
     const { data: session } = useSession();
     const {matchid} = router.query;
-    const {data: match, isLoading} = trpc.match.getMatch.useQuery({id: matchid}, {refetchInterval: 5000});
+    const {data: match, isLoading, refetch: getMatch} = trpc.match.getMatch.useQuery({id: matchid});
+    const pusher = usePusherStore(state => state.pusher);
+
+    useEffect(() => {
+      pusher.signin();
+      const matches = pusher.subscribe(`match-${matchid}`);
+      matches.bind('update-match', getMatch);
+    }, []);
 
     useEffect(() => {
         if (session?.user?.id === match?.hostId) {

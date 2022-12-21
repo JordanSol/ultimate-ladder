@@ -4,6 +4,7 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import Layout from "../components/Layout";
 import { trpc } from "../utils/trpc";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query" 
 
 import "../styles/globals.css";
 
@@ -11,6 +12,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const queryClient = new QueryClient();
     
   return (
     <>
@@ -21,9 +23,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <link rel="manifest" href="../../manifest.json"></link>
     </Head>
     <SessionProvider session={session}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <QueryClientProvider client={queryClient}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </QueryClientProvider>
     </SessionProvider>
     </>
   );

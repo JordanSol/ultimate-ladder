@@ -11,6 +11,8 @@ import CreateMatch from "../components/MatchComponents/CreateMatch";
 
 // Hooks
 import useUiStore from "../utils/hooks/uiStore";
+import usePusherStore from "../utils/hooks/pusherStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useRouter } from "next/router";
 import type { Match } from "@prisma/client";
@@ -31,9 +33,20 @@ interface UserMatchProps {
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
-  const { data: matches, refetch: refetchMatches, isLoading } = trpc.match.getAllMatches.useQuery(undefined, {refetchInterval: 10000})
-  const { data: userMatches, refetch: refetchMatch } = trpc.match.getUserActiveMatch.useQuery(undefined, {refetchInterval: 10000});
+  const { data: matches, refetch: refetchMatches, isLoading } = trpc.match.getAllMatches.useQuery();
+  const { data: userMatches, refetch: refetchMatch } = trpc.match.getUserActiveMatch.useQuery();
   const showCreateMatchModal = useUiStore((state) => state?.createMatchModal);
+  const pusher = usePusherStore(state => state.pusher);
+
+  useEffect(() => {
+    pusher.signin();
+    const matches = pusher.subscribe('matches');
+    matches.bind('new-match', refetchMatches);
+    matches.bind('delete-match', () => {
+      refetchMatches();
+      refetchMatch();
+    });
+  }, []);
 
   return (
     <>
@@ -92,7 +105,6 @@ const Matches: React.FC<MatchesProps> = ({matches, activeMatch, isLoading, refet
                 }
               };
               const isCreator = checkCreator()
-              console.log(match)
               return (
                 <MatchCard key={match.id} match={match} isCreator={isCreator} refetch={refetchMatches}/>
               )
@@ -122,6 +134,7 @@ const UserMatch: React.FC<UserMatchProps> = ({match, refetchMatch, refetchMatche
       setIsHost(true);
     }
   }, [session, match]);
+
 
   return (
     <>

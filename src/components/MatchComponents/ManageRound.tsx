@@ -2,6 +2,7 @@ import { type Match, type Round, type BansFirst } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { type FC, useState, useEffect } from 'react';
 import { trpc } from "../../utils/trpc";
+import usePusherStore from "../../utils/hooks/pusherStore";
 
 import { characters, findCharacter } from '../../lib/characters'
 
@@ -26,6 +27,7 @@ const ManageRound: FC<ManageRoundProps> = ({match}) => {
     const banStages = trpc.match.banStages.useMutation();
     const pickStage = trpc.match.pickStage.useMutation();
     const pickCharacter = trpc.match.pickCharacter.useMutation();
+    const pusher = usePusherStore(state => state.pusher);
 
     const handleOnChange = (e: any) => {
         setCharacter(e.target.value)
@@ -39,6 +41,12 @@ const ManageRound: FC<ManageRoundProps> = ({match}) => {
         }
         console.log("Is Host:", isHost)
     }, [match]);
+
+    useEffect(() => {
+        pusher.signin();
+        const matches = pusher.subscribe(`match-${match.id}`);
+        matches.bind('update-match', refetchRound);
+      }, []);
 
     if (match.ongoing) {
 
