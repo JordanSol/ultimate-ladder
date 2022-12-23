@@ -22,7 +22,7 @@ const ManageRound: FC<ManageRoundProps> = ({match}) => {
                 refetchRound()
             }
         }
-    }, refetchInterval: 5000});
+    }});
     const createRound = trpc.match.createRound.useMutation();
     const banStages = trpc.match.banStages.useMutation();
     const pickStage = trpc.match.pickStage.useMutation();
