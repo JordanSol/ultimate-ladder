@@ -1,15 +1,20 @@
 import create from 'zustand'
-import Pusher from 'pusher-js'
+import PusherJS from 'pusher-js'
 import { env } from '../../env/client.mjs'
 
 type PusherStore = {
-    pusher: Pusher;
+    pusher: PusherJS;
 }
 
 
 const usePusherStore = create<PusherStore>(() => ({
-    pusher: new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
-        cluster: 'us3',
+    pusher: new PusherJS(env.NEXT_PUBLIC_PUSHER_KEY, {
+        wsHost: env.NEXT_PUBLIC_PUSHER_HOST,
+        wsPort: Number(env.NEXT_PUBLIC_PUSHER_PORT),
+        wssPort: Number(env.NEXT_PUBLIC_PUSHER_PORT),
+        forceTLS: true,
+        disableStats: true,
+        enabledTransports: ['ws', 'wss'],
         userAuthentication: {
             endpoint: "/api/pusher/auth-user",
             transport: "ajax",

@@ -33,8 +33,8 @@ interface UserMatchProps {
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
-  const { data: matches, refetch: refetchMatches, isLoading } = trpc.match.getAllMatches.useQuery();
   const { data: userMatches, refetch: refetchMatch } = trpc.match.getUserActiveMatch.useQuery();
+  const { data: matches, refetch: refetchMatches, isLoading } = trpc.match.getAllMatches.useQuery();
   const showCreateMatchModal = useUiStore((state) => state?.createMatchModal);
   const pusher = usePusherStore(state => state.pusher);
 
